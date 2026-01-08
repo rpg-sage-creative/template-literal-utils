@@ -1,0 +1,29 @@
+{
+	"name": "@rpg-sage-creative/x-utils",
+	"version": "0.0.0",
+	"description": "Describe this repo.",
+	"license": "LGPL-3.0-or-later",
+	"main": "build/index.js",
+	"type": "module",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/rpg-sage-creative/x-utils.git"
+	},
+	"publishConfig": {
+		"@rpg-sage-creative:registry": "https://npm.pkg.github.com"
+	},
+	"scripts": {
+		"build": "bash ./node_modules/@rpg-sage-creative/dev-scripts/sh/build.sh",
+		"release": "bash ./node_modules/@rpg-sage-creative/dev-scripts/sh/release.sh",
+		"test": "bash ./node_modules/@rpg-sage-creative/dev-scripts/sh/test.sh",
+		"create-test-todos": "bash ./node_modules/@rpg-sage-creative/dev-scripts/sh/create-test-js.sh"
+	},
+	"devDependencies": {
+		"@types/jest": "^30.0.0",
+		"@types/node": "^24.10.4",
+		"jest": "^30.2.0",
+		"typescript": "^5.9.3",
+		"@rpg-sage-creative/dev-scripts": "^1.0.0"
+	},
+	"dependencies": {}
+}
