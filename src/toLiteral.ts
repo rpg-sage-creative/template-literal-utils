@@ -46,6 +46,7 @@ export function toLiteral(value: unknown, options?: Options, keyPath: string[] =
 		if (doEllipses()) {
 			return `Map([…])`;
 		}
+		/** @todo consider ellipses for map keys ? */
 		return `Map(${toLiteral(Array.from(value.entries()))})`;
 	}
 
