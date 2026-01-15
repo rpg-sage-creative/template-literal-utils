@@ -1,5 +1,22 @@
 import { isDate } from "util/types";
 
+/** Tests the given keyPath against the given ellipses, allowing for * wildcards. */
+function testKeyPath(keyPath: string[], ellipses?: string[]): boolean {
+	if (keyPath.length && ellipses?.length) {
+		for (const el of ellipses) {
+			const elPath = el.split(".");
+			if (keyPath.length === elPath.length) {
+				for (let i = 0; i < keyPath.length; i++) {
+					if (keyPath[i] !== elPath[i] && elPath[i] !== "*") {
+						return false;
+					}
+				}
+				return true;
+			}
+		}
+	}
+	return false;
+}
 
 export type Options = {
 	/** key paths to match for displaying "…" instead of content */
@@ -29,10 +46,8 @@ export function toLiteral(value: unknown, options?: Options, keyPath: string[] =
 	if (value === null) return "null";
 	if (value === undefined) return "undefined";
 
-	const doEllipses = () => options?.ellipses?.includes(keyPath.join("."));
-
 	if (Array.isArray(value)) {
-		if (doEllipses()) {
+		if (testKeyPath(keyPath, options?.ellipses)) {
 			return "[…]";
 		}
 		return `[${value.map((value, i) => toLiteral(value, options, keyPath.concat([`${i}`]))).join(",")}]`;
@@ -43,7 +58,7 @@ export function toLiteral(value: unknown, options?: Options, keyPath: string[] =
 	}
 
 	if (value instanceof Map) {
-		if (doEllipses()) {
+		if (testKeyPath(keyPath, options?.ellipses)) {
 			return `Map([…])`;
 		}
 		/** @todo consider ellipses for map keys ? */
@@ -55,7 +70,7 @@ export function toLiteral(value: unknown, options?: Options, keyPath: string[] =
 	}
 
 	if (value instanceof Set) {
-		if (doEllipses()) {
+		if (testKeyPath(keyPath, options?.ellipses)) {
 			return `Set([…])`;
 		}
 		return `Set(${toLiteral([...value.values()])})`;
@@ -66,7 +81,7 @@ export function toLiteral(value: unknown, options?: Options, keyPath: string[] =
 			return `${value}n`;
 
 		case "object":
-			if (doEllipses()) {
+			if (testKeyPath(keyPath, options?.ellipses)) {
 				return "{…}";
 			}
 			const entries = [...Object.entries(value as any)];

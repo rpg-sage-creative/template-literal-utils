@@ -1,12 +1,27 @@
 import { isDate } from "util/types";
+function testKeyPath(keyPath, ellipses) {
+    if (keyPath.length && ellipses?.length) {
+        for (const el of ellipses) {
+            const elPath = el.split(".");
+            if (keyPath.length === elPath.length) {
+                for (let i = 0; i < keyPath.length; i++) {
+                    if (keyPath[i] !== elPath[i] && elPath[i] !== "*") {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        }
+    }
+    return false;
+}
 export function toLiteral(value, options, keyPath = []) {
     if (value === null)
         return "null";
     if (value === undefined)
         return "undefined";
-    const doEllipses = () => options?.ellipses?.includes(keyPath.join("."));
     if (Array.isArray(value)) {
-        if (doEllipses()) {
+        if (testKeyPath(keyPath, options?.ellipses)) {
             return "[…]";
         }
         return `[${value.map((value, i) => toLiteral(value, options, keyPath.concat([`${i}`]))).join(",")}]`;
@@ -15,7 +30,7 @@ export function toLiteral(value, options, keyPath = []) {
         return `Date("${value.toISOString()}")`;
     }
     if (value instanceof Map) {
-        if (doEllipses()) {
+        if (testKeyPath(keyPath, options?.ellipses)) {
             return `Map([…])`;
         }
         return `Map(${toLiteral(Array.from(value.entries()))})`;
@@ -24,7 +39,7 @@ export function toLiteral(value, options, keyPath = []) {
         return `/${value.source}/${value.flags}`;
     }
     if (value instanceof Set) {
-        if (doEllipses()) {
+        if (testKeyPath(keyPath, options?.ellipses)) {
             return `Set([…])`;
         }
         return `Set(${toLiteral([...value.values()])})`;
@@ -33,7 +48,7 @@ export function toLiteral(value, options, keyPath = []) {
         case "bigint":
             return `${value}n`;
         case "object":
-            if (doEllipses()) {
+            if (testKeyPath(keyPath, options?.ellipses)) {
                 return "{…}";
             }
             const entries = [...Object.entries(value)];

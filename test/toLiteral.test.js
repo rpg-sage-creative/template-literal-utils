@@ -56,6 +56,16 @@ describe("toLiteral", () => {
 			expected: `{"childObject":{"b":{…}},"bigint":123n}`,
 			options: { ellipses:["childObject.b"] }
 		},
+		{
+			input: { "childObject": { "b":{"c":"D"} }, "bigint": 123n, "other":{"b":"B"} },
+			expected: `{"childObject":{"b":{…}},"bigint":123n,"other":{"b":"B"}}`,
+			options: { ellipses:["*.b"] }
+		},
+		{
+			input: { "childObject": { "b":{"c":"D"} }, "bigint": 123n, "other":{"b":{"e":"E"}} },
+			expected: `{"childObject":{"b":{…}},"bigint":123n,"other":{"b":{…}}}`,
+			options: { ellipses:["*.b"] }
+		},
 
 	];
 
