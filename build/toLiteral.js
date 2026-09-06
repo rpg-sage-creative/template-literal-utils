@@ -1,4 +1,5 @@
 import { isDate } from "util/types";
+/** Tests the given keyPath against the given ellipses, allowing for * wildcards. */
 function testKeyPath(keyPath, ellipses) {
     if (keyPath.length && ellipses?.length) {
         for (const el of ellipses) {
@@ -33,6 +34,7 @@ export function toLiteral(value, options, keyPath = []) {
         if (testKeyPath(keyPath, options?.ellipses)) {
             return `Map([…])`;
         }
+        /** @todo consider ellipses for map keys ? */
         return `Map(${toLiteral(Array.from(value.entries()))})`;
     }
     if (value instanceof RegExp) {
@@ -55,6 +57,7 @@ export function toLiteral(value, options, keyPath = []) {
             const mapped = entries.map(([key, val]) => `${toLiteral(key)}:${toLiteral(val, options, keyPath.concat([key]))}`);
             return `{${mapped.join(",")}}`;
         case "string":
+            // we use stringify to let it escape special characters
             return JSON.stringify(value);
         default:
             return String(value);
